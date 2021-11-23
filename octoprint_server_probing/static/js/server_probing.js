@@ -1,29 +1,105 @@
-/*
- * View model for OctoPrint-Server_probing
- *
- * Author: Ian Carr-de Avelon
- * License: AGPLv3
- */
 $(function() {
-    function Server_probingViewModel(parameters) {
-        var self = this;
+	function ProbeViewModel(parameters) {
+		var self = this;
+		self.settings = undefined;
+		self.btnProbe = undefined;
+		self.checkStatus  = undefined;
+		self.btnProbeIcon = undefined;
+		self.btnProbeText = undefined;
 
-        // assign the injected parameters, e.g.:
-        // self.loginStateViewModel = parameters[0];
-        // self.settingsViewModel = parameters[1];
+                self.checkStatus  = function() {
+                        $.ajax({
+                                url: API_BASEURL + "plugin/server_probing",
+                                type: "GET",
+                                dataType: "json",
+                                data: JSON.stringify({
+                                        action: "None"
+                                }),
+                                contentType: "application/json; charset=UTF-8",
+                                success:function(data) {
+                                if ( data.on == "True") {
+                                    document.getElementById("job_probe").style.color = "red";
+                                } else {
+                                    document.getElementById("job_probe").style.color = "green";
+                                }
+                                        },
+                                error: function (data, status) {
+                                        var options = {
+                                                title: "Probeing failed.",
+                                                text: data.responseText,
+                                                hide: true,
+                                                buttons: {
+                                                        sticker: false,
+                                                        closer: true
+                                                },
+                                                type: "error"
+                                        };
+                                        
+                                }
+                        });
+                };
 
-        // TODO: Implement your plugin's view model here.
-    }
+                self.btnProbeClick  = function() {
+                        $.ajax({
+                                url: API_BASEURL + "plugin/server_probing",
+                                type: "GET",
+                                dataType: "json",
+                                data: JSON.stringify({
+                                        action: "Toggle"
+                                }),
+                                contentType: "application/json; charset=UTF-8",
+                                success:function(data) {
+                                if ( data.on == "True") {
+                                    document.getElementById("job_probe").style.color = "red";
+                                } else {
+                                    document.getElementById("job_probe").style.color = "green";
+                                }
+                                        },
+                                error: function (data, status) {
+                                        var options = {
+                                                title: "Probeing failed.",
+                                                text: data.responseText,
+                                                hide: true,
+                                                buttons: {
+                                                        sticker: false,
+                                                        closer: true
+                                                },
+                                                type: "error"
+                                        };
+                                        
+                                }
+                        });
+                };
 
-    /* view model class, parameters for constructor, container to bind to
-     * Please see http://docs.octoprint.org/en/master/plugins/viewmodels.html#registering-custom-viewmodels for more details
-     * and a full list of the available options.
-     */
-    OCTOPRINT_VIEWMODELS.push({
-        construct: Server_probingViewModel,
-        // ViewModels your plugin depends on, e.g. loginStateViewModel, settingsViewModel, ...
-        dependencies: [ /* "loginStateViewModel", "settingsViewModel" */ ],
-        // Elements to bind to, e.g. #settings_plugin_server_probing, #tab_plugin_server_probing, ...
-        elements: [ /* ... */ ]
-    });
+		self.initializeButton = function() {
+			var buttonContainer = $('#job_print')[0].parentElement;
+			buttonContainer.children[0].style.width = "100%";
+			buttonContainer.children[0].style.marginBottom = "10px";
+			buttonContainer.children[1].style.marginLeft = "0";
+			
+			self.btnProbe = document.createElement("button");
+			self.btnProbe.id = "job_probe";
+			self.btnProbe.classList.add("btn");
+			self.btnProbe.classList.add("span4");
+			self.btnProbe.addEventListener("click", self.btnProbeClick);
+			
+			self.btnProbeIcon = document.createElement("i");
+			self.btnProbe.appendChild(self.btnProbeIcon);
+			
+			self.btnProbeText = document.createTextNode(" ");
+			self.btnProbe.appendChild(self.btnProbeText);
+			
+			self.btnProbeText.nodeValue = " Probe";
+                        self.btnProbeIcon.classList.add("fas", "fa-level-down-alt");
+
+			buttonContainer.appendChild(self.btnProbe);
+		};
+		
+		self.initializeButton();
+                self.checkStatus();
+	}
+	
+	OCTOPRINT_VIEWMODELS.push([
+		ProbeViewModel
+	]);
 });
