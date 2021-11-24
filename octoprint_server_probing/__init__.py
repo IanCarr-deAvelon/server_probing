@@ -34,10 +34,10 @@ class Server_probingPlugin(octoprint.plugin.SettingsPlugin,
 
 	##~~ AssetPlugin mixin
 
-	def get_assets(self):
+        def get_assets(self):
 		# Define your plugin's asset files to automatically include in the
 		# core UI here.
-		return dict(
+                return dict(
 			js=["js/server_probing.js"],
 			css=["css/server_probing.css"],
 			less=["less/server_probing.less"]
@@ -45,11 +45,11 @@ class Server_probingPlugin(octoprint.plugin.SettingsPlugin,
 
 	##~~ Softwareupdate hook
 
-	def get_update_information(self):
+        def get_update_information(self):
 		# Define the configuration for your plugin to use with the Software Update
 		# Plugin here. See https://docs.octoprint.org/en/master/bundledplugins/softwareupdate.html
 		# for details.
-		return dict(
+                return dict(
 			server_probing=dict(
 				displayName="Server_probing Plugin",
 				displayVersion=self._plugin_version,
